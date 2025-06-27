@@ -10,18 +10,16 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         body {
-            background-image: url({{ $background->url }});
-            background-color: {{ $backgroundColor->url }};
+            /* Use null coalescing to prevent errors if $background or $backgroundColor are null */
+            background-image: url({{ $background->url ?? '' }});
+            background-color: {{ $backgroundColor->url ?? '' }};
         }
 
         .header {
             background-color: #ffffff;
-            /* White background for the header */
             padding: 20px 0;
             border-bottom: 1px solid #e9ecef;
-            /* Light border at the bottom */
             box-shadow: 0 2px 4px rgba(0, 0, 0, .05);
-            /* Subtle shadow for depth */
         }
 
         .header h1 {
@@ -253,10 +251,23 @@
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav">
                         @foreach ($links as $link)
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ $link->url }}">{{ $link->name }}</a>
-                            </li>
+                            @if ($link->name !== 'Login' && $link->name !== 'Register' && $link->name !== 'For employer')
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ $link->url }}">{{ $link->name }}</a>
+                                </li>
+                            @endif
                         @endforeach
+                        <li class="nav-item">
+                            <a class="nav-link" href="/UserLogOut">LogOut</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/User/UserInfoDashBoard">{{ session('name') }}</a>
+                        </li>
+                        <li>
+                            <a href="/User/UserInfoDashBoard"><i class="bi bi-person-circle fs-4" style="color: black"></i>
+                                <i class="bi bi-list fs-4" style="color: black"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -340,7 +351,7 @@
                 <h2 class="section-title text-primary mb-4 text-center">Featured Companies</h2> {{-- Added text-primary, mb, text-center --}}
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     {{-- Loop through your featured companies here --}}
-                    @foreach($companies as $company)
+                    @foreach ($companies as $company)
                         {{-- Example loop for 6 companies --}}
                         <div class="col">
                             <div class="card company-card text-center h-100 shadow-sm rounded-lg border-0">
@@ -351,11 +362,11 @@
                                     <img src="https://placehold.co/80x80/ADD8E6/007bff?text=Logo" {{-- Using placeholder for logo --}}
                                         class="img-fluid company-logo rounded-circle mb-3 border border-primary border-2"
                                         alt="Company Logo"> {{-- Added border to logo --}}
-                                    <h5 class="card-title text-dark mb-1">{{$company->company_name}}</h5>
-                                    <p class="card-text small mb-2"><small>{{$company->industry_type}}</small></p>
-                                    <p class="card-text text-dark mb-4">{{$company->bio}}
+                                    <h5 class="card-title text-dark mb-1">{{ $company->company_name }}</h5>
+                                    <p class="card-text small mb-2"><small>{{ $company->industry_type }}</small></p>
+                                    <p class="card-text text-dark mb-4">{{ $company->bio }}
                                     </p>
-                                    <a href="{{$company->website}}"
+                                    <a href="{{ $company->website }}"
                                         class="btn btn-sm btn-outline-primary mt-auto rounded-md shadow-sm">View
                                         Jobs</a> {{-- mt-auto pushes button to bottom --}}
                                 </div>
